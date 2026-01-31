@@ -1,43 +1,34 @@
 # NSE Algo Scanner
 
-A real-time stock scanner for NSE (National Stock Exchange) using Yahoo Finance data.
+A production-ready web application for scanning NSE stocks using Yahoo Finance data.
 
 ## Features
-- **Scalp Mode (5m)** & **Intraday Mode (15m)**
-- Real-time technical analysis (EMA, VWAP, ATR, RVol)
-- NIFTY 50 Market Filter (Detects sideways market)
-- Automated Trade Signals (Entry, SL, Target)
-- No Database required (In-memory processing)
+- Real-time stock scanning
+- Scalp and Intraday modes
+- EMA, ATR, and Volume indicators
+- Mobile-responsive UI
 
-## Local Development
+## Setup
 
 1. Install dependencies:
    ```bash
    npm install
    ```
 
-2. Start the development server (Frontend + Backend):
+2. Run development server:
    ```bash
-   # Terminal 1: Frontend
    npm run dev
-   
-   # Terminal 2: Backend
-   node backend/server.js
    ```
 
-## Production Deployment (Railway)
-
-The app is configured to run as a single unit (Node.js serving React static build).
-
-1. Build the frontend:
+3. Build for production:
    ```bash
    npm run build
    ```
 
-2. Start the production server:
+4. Start production server:
    ```bash
    npm start
    ```
 
-## Environment Variables
-- `PORT`: (Optional) Server port, defaults to 8080.
+## Deployment
+This app is ready for deployment on Railway or any Node.js hosting.
