@@ -1,17 +1,26 @@
 import { Config, ScanResponse } from '../types';
 
-// Use environment variable if defined, otherwise fallback to relative path
-const API_PREFIX = import.meta.env.VITE_API_URL || '/api';
+// Logic:
+// 1. If VITE_API_URL is set (from .env), use it.
+// 2. Otherwise, use relative '/api' path (assumes frontend served by backend).
+let API_BASE = import.meta.env.VITE_API_URL || '/api';
+
+// Remove trailing slash if present to avoid // in urls
+if (API_BASE.endsWith('/')) {
+    API_BASE = API_BASE.slice(0, -1);
+}
+
+console.log(`API Service Initialized. Base URL: ${API_BASE}`);
 
 const handleResponse = async (res: Response) => {
     if (!res.ok) {
         const text = await res.text();
-        // Try to parse JSON error if possible
         try {
             const json = JSON.parse(text);
             throw new Error(json.error || json.message || `API Error: ${res.status}`);
-        } catch (e) {
-            // If not JSON, throw the raw text or status
+        } catch (e: any) {
+            // Re-throw if it was already our parsed error, otherwise throw generic
+            if (e.message && e.message.startsWith('API Error')) throw e;
             throw new Error(`API Error: ${res.status} ${text.substring(0, 100)}`);
         }
     }
@@ -19,10 +28,8 @@ const handleResponse = async (res: Response) => {
 };
 
 export const fetchSettings = async (): Promise<Config> => {
-    const url = `${API_PREFIX}/settings`;
-    console.log(`Fetching settings from: ${url}`);
     try {
-        const res = await fetch(url);
+        const res = await fetch(`${API_BASE}/settings`);
         return handleResponse(res);
     } catch (error: any) {
         console.error("Fetch Settings Error:", error);
@@ -31,9 +38,8 @@ export const fetchSettings = async (): Promise<Config> => {
 };
 
 export const updateSettings = async (config: Config): Promise<Config> => {
-    const url = `${API_PREFIX}/settings`;
     try {
-        const res = await fetch(url, {
+        const res = await fetch(`${API_BASE}/settings`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(config),
@@ -46,10 +52,8 @@ export const updateSettings = async (config: Config): Promise<Config> => {
 };
 
 export const fetchScan = async (): Promise<ScanResponse> => {
-    const url = `${API_PREFIX}/scan`;
-    console.log(`Fetching scan from: ${url}`);
     try {
-        const res = await fetch(url);
+        const res = await fetch(`${API_BASE}/scan`);
         return handleResponse(res);
     } catch (error: any) {
         console.error("Fetch Scan Error:", error);
