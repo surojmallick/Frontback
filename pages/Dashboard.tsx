@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { StockTable } from '../components/StockTable';
 import { ModeToggle } from '../components/ModeToggle';
-import { fetchScan, fetchSettings, updateSettings } from '../services/api';
+import { fetchScan, fetchSettings, updateSettings, getApiUrl } from '../services/api';
 import { ScanResponse } from '../types';
 import { Link } from 'react-router-dom';
 
@@ -17,9 +17,13 @@ const Dashboard: React.FC = () => {
         setError(null);
         try {
             // Ensure backend has correct mode
-            const currentConfig = await fetchSettings();
-            if (currentConfig.mode !== mode) {
-                await updateSettings({ ...currentConfig, mode });
+            try {
+                const currentConfig = await fetchSettings();
+                if (currentConfig.mode !== mode) {
+                    await updateSettings({ ...currentConfig, mode });
+                }
+            } catch (configErr) {
+                console.warn("Could not sync settings, proceeding to scan:", configErr);
             }
             
             const data = await fetchScan();
@@ -39,11 +43,11 @@ const Dashboard: React.FC = () => {
         return () => clearInterval(interval);
     }, [loadScan]);
 
-    const activeTrades = scanData?.trades.filter(t => t.signal !== 'NO TRADE') || [];
-    const ignoredTrades = scanData?.trades.filter(t => t.signal === 'NO TRADE') || [];
+    const activeTrades = scanData?.trades?.filter(t => t.signal !== 'NO TRADE') || [];
+    const ignoredTrades = scanData?.trades?.filter(t => t.signal === 'NO TRADE') || [];
 
     return (
-        <div className="min-h-screen bg-gray-900 text-gray-100 p-6">
+        <div className="min-h-screen bg-gray-900 text-gray-100 p-6 flex flex-col">
             <header className="flex justify-between items-center mb-8 border-b border-gray-800 pb-4">
                 <div>
                     <h1 className="text-2xl font-bold text-blue-400">NSE Algo Scanner</h1>
@@ -71,6 +75,9 @@ const Dashboard: React.FC = () => {
             {error && (
                 <div className="bg-red-900/20 border border-red-800 text-red-400 p-4 rounded mb-4">
                     <strong>Connection Error:</strong> {error}
+                    <div className="text-xs mt-2 opacity-75">
+                        Attempted to connect to: {getApiUrl()}
+                    </div>
                 </div>
             )}
 
@@ -105,15 +112,19 @@ const Dashboard: React.FC = () => {
 
             <ModeToggle mode={mode} onChange={setMode} />
 
-            <div className="mb-8">
+            <div className="mb-8 flex-grow">
                 <h2 className="text-xl font-semibold mb-4 text-green-400">Actionable Signals</h2>
                 <StockTable trades={activeTrades} />
             </div>
 
-            <div className="opacity-60">
+            <div className="opacity-60 mb-8">
                 <h2 className="text-xl font-semibold mb-4 text-gray-400">Filtered Out</h2>
                 <StockTable trades={ignoredTrades} />
             </div>
+
+            <footer className="text-xs text-gray-600 border-t border-gray-800 pt-4 mt-auto">
+                Backend: {getApiUrl()}
+            </footer>
         </div>
     );
 };
