@@ -25,8 +25,10 @@ const Dashboard: React.FC = () => {
             const data = await fetchScan();
             setScanData(data);
             setLastUpdated(new Date());
-        } catch (err) {
-            setError('Failed to connect to scanner service.');
+        } catch (err: any) {
+            console.error(err);
+            // Display the actual error message from the API or Network
+            setError(err.message || 'Failed to connect to scanner service.');
         } finally {
             setLoading(false);
         }
@@ -100,7 +102,10 @@ const Dashboard: React.FC = () => {
 
             {error && (
                 <div className="bg-red-900/20 border border-red-800 text-red-400 p-4 rounded mb-4">
-                    {error}
+                    <strong>Error:</strong> {error}
+                    <div className="text-xs text-red-300 mt-2">
+                        Ensure the backend server is running on port 8080.
+                    </div>
                 </div>
             )}
 

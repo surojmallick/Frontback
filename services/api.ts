@@ -1,17 +1,21 @@
 import { Config, ScanResponse } from '../types';
 
-// In production (same origin), use relative path. 
-// In development, use localhost or specified URL.
-const BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:8080' : '');
+// Use relative paths. 
+// In development, vite.config.ts proxy handles forwarding to localhost:8080.
+// In production, the backend serves the frontend, so relative paths work natively.
+const BASE_URL = '';
 
 export const fetchSettings = async (): Promise<Config> => {
     try {
         const res = await fetch(`${BASE_URL}/settings`);
-        if (!res.ok) throw new Error(`API Error: ${res.status} ${res.statusText}`);
+        if (!res.ok) {
+            const text = await res.text();
+            throw new Error(`API Error: ${res.status} ${text || res.statusText}`);
+        }
         return res.json();
-    } catch (error) {
+    } catch (error: any) {
         console.error("Fetch Settings Error:", error);
-        throw error;
+        throw new Error(error.message || "Failed to fetch settings");
     }
 };
 
@@ -22,21 +26,27 @@ export const updateSettings = async (config: Config): Promise<Config> => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(config),
         });
-        if (!res.ok) throw new Error(`API Error: ${res.status} ${res.statusText}`);
+        if (!res.ok) {
+            const text = await res.text();
+            throw new Error(`API Error: ${res.status} ${text || res.statusText}`);
+        }
         return res.json();
-    } catch (error) {
+    } catch (error: any) {
         console.error("Update Settings Error:", error);
-        throw error;
+        throw new Error(error.message || "Failed to update settings");
     }
 };
 
 export const fetchScan = async (): Promise<ScanResponse> => {
     try {
         const res = await fetch(`${BASE_URL}/scan`);
-        if (!res.ok) throw new Error(`API Error: ${res.status} ${res.statusText}`);
+        if (!res.ok) {
+            const text = await res.text();
+            throw new Error(`API Error: ${res.status} ${text || res.statusText}`);
+        }
         return res.json();
-    } catch (error) {
+    } catch (error: any) {
         console.error("Fetch Scan Error:", error);
-        throw error;
+        throw new Error(error.message || "Failed to fetch scan data");
     }
 };

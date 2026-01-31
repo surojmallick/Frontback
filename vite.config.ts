@@ -5,5 +5,9 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 3000,
+    proxy: {
+      '/scan': 'http://localhost:8080',
+      '/settings': 'http://localhost:8080'
+    }
   }
 });
