@@ -1,16 +1,16 @@
 import { Config, ScanResponse } from '../types';
 
-// Use relative paths. 
-// In development, vite.config.ts proxy handles forwarding to localhost:8080.
-// In production, the backend serves the frontend, so relative paths work natively.
-const BASE_URL = '';
+// Use relative paths with /api prefix.
+// In development, vite.config.ts proxy forwards /api to localhost:8080.
+// In production, server.js handles /api routes directly.
+const API_PREFIX = '/api';
 
 export const fetchSettings = async (): Promise<Config> => {
     try {
-        const res = await fetch(`${BASE_URL}/settings`);
+        const res = await fetch(`${API_PREFIX}/settings`);
         if (!res.ok) {
             const text = await res.text();
-            throw new Error(`API Error: ${res.status} ${text || res.statusText}`);
+            throw new Error(`API Error: ${res.status} ${text.substring(0, 100)}`);
         }
         return res.json();
     } catch (error: any) {
@@ -21,14 +21,14 @@ export const fetchSettings = async (): Promise<Config> => {
 
 export const updateSettings = async (config: Config): Promise<Config> => {
     try {
-        const res = await fetch(`${BASE_URL}/settings`, {
+        const res = await fetch(`${API_PREFIX}/settings`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(config),
         });
         if (!res.ok) {
             const text = await res.text();
-            throw new Error(`API Error: ${res.status} ${text || res.statusText}`);
+            throw new Error(`API Error: ${res.status} ${text.substring(0, 100)}`);
         }
         return res.json();
     } catch (error: any) {
@@ -39,10 +39,10 @@ export const updateSettings = async (config: Config): Promise<Config> => {
 
 export const fetchScan = async (): Promise<ScanResponse> => {
     try {
-        const res = await fetch(`${BASE_URL}/scan`);
+        const res = await fetch(`${API_PREFIX}/scan`);
         if (!res.ok) {
             const text = await res.text();
-            throw new Error(`API Error: ${res.status} ${text || res.statusText}`);
+            throw new Error(`API Error: ${res.status} ${text.substring(0, 100)}`);
         }
         return res.json();
     } catch (error: any) {

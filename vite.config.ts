@@ -6,8 +6,11 @@ export default defineConfig({
   server: {
     port: 3000,
     proxy: {
-      '/scan': 'http://localhost:8080',
-      '/settings': 'http://localhost:8080'
+      '/api': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        secure: false,
+      }
     }
   }
 });
