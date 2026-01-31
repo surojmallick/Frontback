@@ -1,38 +1,39 @@
 # NSE Algo Scanner
 
-A production-ready web application for scanning NSE stocks using Yahoo Finance data.
+Real-time stock scanner for NSE (National Stock Exchange of India) using Yahoo Finance data.
 
 ## Features
-- Real-time stock scanning
-- Scalp (5m) and Intraday (15m) modes
-- Configurable strategies (EMA, ATR, Volume)
-- Mobile-responsive UI
 
-## Local Development
+- Real-time scanning of Nifty 50 stocks
+- Scalp (5m) and Intraday (15m) modes
+- Configurable indicators (EMA, ATR, RVol)
+- Nifty 50 Market Filter
+- Railway-ready deployment
+
+## Setup
 
 1. Install dependencies:
    ```bash
    npm install
    ```
 
-2. Start the backend:
+2. Run development server (Frontend + Backend):
    ```bash
-   node server.js
-   ```
+   # Terminal 1: Backend
+   node backend/server.js
 
-3. Start the frontend (in a separate terminal):
-   ```bash
+   # Terminal 2: Frontend
    npm run dev
    ```
 
-## Deployment (Railway)
+3. Build for Production:
+   ```bash
+   npm run build
+   npm start
+   ```
 
-The application is configured for deployment on Railway.
+## Deployment
 
-1. Connect your GitHub repository to Railway.
-2. Railway will automatically detect `package.json` and the `start` script.
-3. The build script (`npm run build`) will compile the React frontend to `dist/`.
-4. The `start` script (`node server.js`) will launch the Express server which serves both the API and the static frontend files.
-
-## Environment Variables
-- `PORT`: Set automatically by Railway (defaults to 8080 locally).
+This app is configured for Railway.
+- Entry point: `npm start`
+- Port: `PORT` env variable (default 8080)
