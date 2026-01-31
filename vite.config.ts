@@ -5,10 +5,10 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 3000,
+    // Local development proxy to avoid CORS when running npm run dev locally
     proxy: {
-      // Forward /api requests to local backend during development
       '/api': {
-        target: 'http://localhost:8080',
+        target: 'https://frontback-production.up.railway.app',
         changeOrigin: true,
         secure: false,
       }
@@ -16,6 +16,7 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    emptyOutDir: true
+    emptyOutDir: true,
+    sourcemap: false
   }
 });
