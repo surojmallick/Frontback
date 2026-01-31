@@ -49,18 +49,19 @@ apiRouter.get('/scan', async (req, res) => {
     }
 });
 
-// Mount API
+// Mount API on BOTH /api and root / to handle frontend mismatches gracefully
 app.use('/api', apiRouter);
+app.use('/', apiRouter); 
 
 // --- Frontend Static Serving ---
 const distPath = path.join(__dirname, 'dist');
 
 // Check if build exists
 if (!fs.existsSync(distPath)) {
-    console.error("CRITICAL: 'dist' directory not found. Did the build run?");
+    console.warn("WARNING: 'dist' directory not found. Frontend will not be served.");
+} else {
+    app.use(express.static(distPath));
 }
-
-app.use(express.static(distPath));
 
 // Handle React Routing (SPA)
 app.get('*', (req, res) => {
@@ -80,5 +81,5 @@ app.get('*', (req, res) => {
 
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on port ${PORT}`);
-    console.log(`API available at /api`);
+    console.log(`API available at /api/scan and /scan`);
 });

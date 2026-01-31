@@ -17,7 +17,7 @@ const handleResponse = async (res: Response, endpoint: string) => {
             throw new Error(json.error || json.message || `API Error: ${res.status}`);
         } catch (e: any) {
             if (e.message && e.message.startsWith('API Error')) throw e;
-            throw new Error(`API Error: ${res.status} on ${endpoint}`);
+            throw new Error(`API Error: ${res.status} (Check if backend URL is correct)`);
         }
     }
     return res.json();
