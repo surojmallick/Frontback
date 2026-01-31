@@ -1,0 +1,5 @@
+{
+  "name": "NSE Intraday Scanner",
+  "description": "Real-time intraday and scalp trading scanner for NSE stocks using Yahoo Finance data.",
+  "requestFramePermissions": []
+}
