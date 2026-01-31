@@ -1,9 +1,7 @@
 import { Config, ScanResponse } from '../types';
 
-// Use relative paths with /api prefix.
-// In development, vite.config.ts proxy forwards /api to localhost:8080.
-// In production, server.js handles /api routes directly.
-const API_PREFIX = '/api';
+// Use environment variable if defined, otherwise fallback to relative path (useful for local dev with proxy)
+const API_PREFIX = import.meta.env.VITE_API_URL || '/api';
 
 export const fetchSettings = async (): Promise<Config> => {
     try {
