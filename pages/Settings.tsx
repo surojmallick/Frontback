@@ -116,7 +116,7 @@ const Settings: React.FC = () => {
                                     onChange={e => setConfig({...config, safety: {...config.safety, confirmClose: e.target.checked}})}
                                     className="w-5 h-5 rounded text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500"
                                 />
-                                <span className="text-gray-300">Candle Body Confirmation (>60%)</span>
+                                <span className="text-gray-300">Candle Body Confirmation (&gt;60%)</span>
                             </label>
                         </div>
                     </div>
