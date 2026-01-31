@@ -1,11 +1,13 @@
 import { Config, ScanResponse } from '../types';
 
-// CRITICAL FIX: Use relative path. 
-// When deployed, the frontend and backend are on the same domain.
-// Browsers handle relative paths automatically without CORS issues.
-const API_BASE = '/api';
+// Get URL from .env file
+const API_BASE = import.meta.env.VITE_API_URL;
 
-console.log(`[API] Initialized with base: ${API_BASE}`);
+if (!API_BASE) {
+    console.error("VITE_API_URL is missing in .env file!");
+}
+
+console.log(`[API] Connecting to: ${API_BASE}`);
 
 const handleResponse = async (res: Response) => {
     if (!res.ok) {
@@ -15,7 +17,7 @@ const handleResponse = async (res: Response) => {
             throw new Error(json.error || json.message || `API Error: ${res.status}`);
         } catch (e: any) {
             if (e.message && e.message.startsWith('API Error')) throw e;
-            throw new Error(`API Error: ${res.status} ${text.substring(0, 50)}`);
+            throw new Error(`API Error: ${res.status}`);
         }
     }
     return res.json();
@@ -26,7 +28,7 @@ export const fetchSettings = async (): Promise<Config> => {
         const res = await fetch(`${API_BASE}/settings`);
         return handleResponse(res);
     } catch (error: any) {
-        console.error("[API] Fetch Settings Error:", error);
+        console.error("Fetch Settings Error:", error);
         throw error;
     }
 };
@@ -40,7 +42,7 @@ export const updateSettings = async (config: Config): Promise<Config> => {
         });
         return handleResponse(res);
     } catch (error: any) {
-        console.error("[API] Update Settings Error:", error);
+        console.error("Update Settings Error:", error);
         throw error;
     }
 };
@@ -50,7 +52,7 @@ export const fetchScan = async (): Promise<ScanResponse> => {
         const res = await fetch(`${API_BASE}/scan`);
         return handleResponse(res);
     } catch (error: any) {
-        console.error("[API] Fetch Scan Error:", error);
+        console.error("Fetch Scan Error:", error);
         throw error;
     }
 };

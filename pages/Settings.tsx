@@ -96,31 +96,6 @@ const Settings: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Safety Settings */}
-                    <div>
-                        <h3 className="text-lg font-medium text-green-400 mb-4">Safety Protocols</h3>
-                        <div className="space-y-3">
-                            <label className="flex items-center space-x-3 cursor-pointer">
-                                <input 
-                                    type="checkbox"
-                                    checked={config.safety.marketFilter}
-                                    onChange={e => setConfig({...config, safety: {...config.safety, marketFilter: e.target.checked}})}
-                                    className="w-5 h-5 rounded text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500"
-                                />
-                                <span className="text-gray-300">NIFTY 50 Filter (Block trades if flat)</span>
-                            </label>
-                            <label className="flex items-center space-x-3 cursor-pointer">
-                                <input 
-                                    type="checkbox"
-                                    checked={config.safety.confirmClose}
-                                    onChange={e => setConfig({...config, safety: {...config.safety, confirmClose: e.target.checked}})}
-                                    className="w-5 h-5 rounded text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500"
-                                />
-                                <span className="text-gray-300">Candle Body Confirmation (&gt;60%)</span>
-                            </label>
-                        </div>
-                    </div>
-
                     <div className="pt-6 border-t border-gray-700">
                         <button 
                             onClick={handleSave}

@@ -1,37 +1,26 @@
 {
-  "name": "nse-algo-scanner",
+  "name": "nse-scanner-frontend",
+  "private": true,
   "version": "1.0.0",
-  "description": "NSE Stock Scanner",
-  "main": "server.js",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "start": "node server.js",
-    "scan": "node backend/scan.js",
-    "dev:all": "concurrently \"npm run start\" \"npm run dev\""
+    "preview": "vite preview"
   },
   "dependencies": {
-    "axios": "^1.6.2",
-    "cors": "^2.8.5",
-    "express": "^4.18.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.20.0",
-    "technicalindicators": "^3.1.0"
+    "react-router-dom": "^6.20.0"
   },
   "devDependencies": {
-    "@types/node": "^20.10.0",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
     "@vitejs/plugin-react": "^4.2.0",
     "autoprefixer": "^10.4.16",
-    "concurrently": "^8.2.2",
     "postcss": "^8.4.31",
     "tailwindcss": "^3.3.5",
     "typescript": "^5.2.2",
     "vite": "^5.0.0"
-  },
-  "engines": {
-    "node": "24.x"
   }
 }

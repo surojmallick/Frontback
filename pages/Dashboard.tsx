@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { StockTable } from '../components/StockTable';
 import { ModeToggle } from '../components/ModeToggle';
 import { fetchScan, fetchSettings, updateSettings } from '../services/api';
-import { Config, ScanResponse, TradeSignal } from '../types';
+import { ScanResponse } from '../types';
 import { Link } from 'react-router-dom';
 
 const Dashboard: React.FC = () => {
@@ -16,7 +16,7 @@ const Dashboard: React.FC = () => {
         setLoading(true);
         setError(null);
         try {
-            // First ensure backend has correct mode
+            // Ensure backend has correct mode
             const currentConfig = await fetchSettings();
             if (currentConfig.mode !== mode) {
                 await updateSettings({ ...currentConfig, mode });
@@ -27,7 +27,6 @@ const Dashboard: React.FC = () => {
             setLastUpdated(new Date());
         } catch (err: any) {
             console.error(err);
-            // Display the actual error message from the API or Network
             setError(err.message || 'Failed to connect to scanner service.');
         } finally {
             setLoading(false);
@@ -36,7 +35,7 @@ const Dashboard: React.FC = () => {
 
     useEffect(() => {
         loadScan();
-        const interval = setInterval(loadScan, 60000); // Auto-refresh every 1 min
+        const interval = setInterval(loadScan, 60000); // Refresh every 1 min
         return () => clearInterval(interval);
     }, [loadScan]);
 
@@ -69,6 +68,12 @@ const Dashboard: React.FC = () => {
                 </div>
             </header>
 
+            {error && (
+                <div className="bg-red-900/20 border border-red-800 text-red-400 p-4 rounded mb-4">
+                    <strong>Connection Error:</strong> {error}
+                </div>
+            )}
+
             {scanData?.status === 'MARKET_FLAT' && (
                 <div className="bg-yellow-900/30 border border-yellow-700 text-yellow-200 p-4 rounded mb-6">
                     <strong>⚠️ Market Filter Active:</strong> {scanData.message}
@@ -100,29 +105,15 @@ const Dashboard: React.FC = () => {
 
             <ModeToggle mode={mode} onChange={setMode} />
 
-            {error && (
-                <div className="bg-red-900/20 border border-red-800 text-red-400 p-4 rounded mb-4">
-                    <strong>Error:</strong> {error}
-                    <div className="text-xs text-red-300 mt-2">
-                        Ensure the backend server is running on port 8080.
-                    </div>
-                </div>
-            )}
-
             <div className="mb-8">
                 <h2 className="text-xl font-semibold mb-4 text-green-400">Actionable Signals</h2>
                 <StockTable trades={activeTrades} />
             </div>
 
             <div className="opacity-60">
-                <h2 className="text-xl font-semibold mb-4 text-gray-400">Filtered Out (No Trade)</h2>
+                <h2 className="text-xl font-semibold mb-4 text-gray-400">Filtered Out</h2>
                 <StockTable trades={ignoredTrades} />
             </div>
-            
-            <footer className="mt-12 text-center text-xs text-gray-600 border-t border-gray-800 pt-4">
-                Disclaimer: Trading involves risk. This tool uses Yahoo Finance data which may be delayed. 
-                Not financial advice.
-            </footer>
         </div>
     );
 };
