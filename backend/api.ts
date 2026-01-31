@@ -1,7 +1,7 @@
 import { Config, ScanResponse } from '../types';
 
 // Use the specific Railway domain for production
-const PROD_URL = 'https://frontback-production.up.railway.app';
+const PROD_URL = 'http://frontback-production.up.railway.app';
 
 // Determine Base URL:
 // 1. Check VITE_API_URL env var
