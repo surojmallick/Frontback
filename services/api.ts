@@ -1,8 +1,8 @@
 import { Config, ScanResponse } from '../types';
 
-// Use environment variable if available (Vercel), otherwise localhost (Dev)
-// Remove trailing slash if present
-const BASE_URL = ((import.meta as any).env.VITE_API_URL || 'http://localhost:8080').replace(/\/$/, '');
+// In production (served by same origin), use relative path (empty string)
+// In development, use localhost:8080 (assuming backend is running there)
+const BASE_URL = import.meta.env.PROD ? '' : (import.meta.env.VITE_API_URL || 'http://localhost:8080').replace(/\/$/, '');
 
 export const fetchSettings = async (): Promise<Config> => {
     try {

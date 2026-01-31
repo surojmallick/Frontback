@@ -1,46 +1,38 @@
-# NSE Intraday Scanner
+# NSE Algo Scanner
 
-A real-time stock scanner for NSE (National Stock Exchange) utilizing Yahoo Finance data.
+A production-ready web application for scanning NSE stocks using Yahoo Finance data.
 
-## 🚀 Local Development
+## Features
+- Real-time stock scanning
+- Scalp (5m) and Intraday (15m) modes
+- Configurable strategies (EMA, ATR, Volume)
+- Mobile-responsive UI
 
-### 1. Start the Backend
-The backend handles data fetching and indicator calculation.
+## Local Development
 
-```bash
-cd backend
-npm install
-npm start
-```
-*Server runs on http://localhost:8080*
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-### 2. Start the Frontend
-The frontend is built with React and Vite.
+2. Start the backend:
+   ```bash
+   node server.js
+   ```
 
-```bash
-# In a new terminal (root directory)
-npm install
-npm run dev
-```
-*Frontend runs on http://localhost:3000*
+3. Start the frontend (in a separate terminal):
+   ```bash
+   npm run dev
+   ```
 
----
+## Deployment (Railway)
 
-## ☁️ Deployment Guide
+The application is configured for deployment on Railway.
 
-### Backend (Railway)
-1. Push this repo to GitHub.
-2. Create a new project on **Railway**.
-3. Select this repository.
-4. **Important**: Go to Settings -> **Root Directory** and set it to `/backend`.
-5. Railway will detect `package.json` and deploy.
-6. Copy the **Public Domain** from the Networking tab (e.g., `https://nse-backend.up.railway.app`).
+1. Connect your GitHub repository to Railway.
+2. Railway will automatically detect `package.json` and the `start` script.
+3. The build script (`npm run build`) will compile the React frontend to `dist/`.
+4. The `start` script (`node server.js`) will launch the Express server which serves both the API and the static frontend files.
 
-### Frontend (Vercel)
-1. Create a new project on **Vercel**.
-2. Select this repository.
-3. Keep Root Directory as `./`.
-4. Add Environment Variable:
-   - **Name**: `VITE_API_URL`
-   - **Value**: Your Railway Backend URL (e.g., `https://nse-backend.up.railway.app`)
-5. Deploy.
+## Environment Variables
+- `PORT`: Set automatically by Railway (defaults to 8080 locally).
