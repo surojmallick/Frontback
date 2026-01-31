@@ -1,10 +1,10 @@
 import { Config, ScanResponse } from '../types';
 
-// Robust URL handling: Remove trailing slash if present to avoid double slashes
+// Robust URL handling: Remove trailing slash if present
 const RAW_URL = import.meta.env.VITE_API_URL || '';
 const API_BASE = RAW_URL.replace(/\/$/, '');
 
-console.log(`[API] Connecting to: ${API_BASE}`);
+console.log(`[API] Configuration Base: ${API_BASE}`);
 
 const handleResponse = async (res: Response, endpoint: string) => {
     if (!res.ok) {
@@ -25,8 +25,10 @@ const handleResponse = async (res: Response, endpoint: string) => {
 
 export const fetchSettings = async (): Promise<Config> => {
     try {
-        const res = await fetch(`${API_BASE}/settings`);
-        return handleResponse(res, '/settings');
+        const url = `${API_BASE}/settings`;
+        console.log(`[API] Fetching: ${url}`);
+        const res = await fetch(url);
+        return handleResponse(res, url);
     } catch (error: any) {
         console.error("Fetch Settings Error:", error);
         throw error;
@@ -35,12 +37,13 @@ export const fetchSettings = async (): Promise<Config> => {
 
 export const updateSettings = async (config: Config): Promise<Config> => {
     try {
-        const res = await fetch(`${API_BASE}/settings`, {
+        const url = `${API_BASE}/settings`;
+        const res = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(config),
         });
-        return handleResponse(res, '/settings (POST)');
+        return handleResponse(res, url);
     } catch (error: any) {
         console.error("Update Settings Error:", error);
         throw error;
@@ -49,8 +52,10 @@ export const updateSettings = async (config: Config): Promise<Config> => {
 
 export const fetchScan = async (): Promise<ScanResponse> => {
     try {
-        const res = await fetch(`${API_BASE}/scan`);
-        return handleResponse(res, '/scan');
+        const url = `${API_BASE}/scan`;
+        console.log(`[API] Fetching: ${url}`);
+        const res = await fetch(url);
+        return handleResponse(res, url);
     } catch (error: any) {
         console.error("Fetch Scan Error:", error);
         throw error;

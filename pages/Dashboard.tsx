@@ -16,14 +16,14 @@ const Dashboard: React.FC = () => {
         setLoading(true);
         setError(null);
         try {
-            // Ensure backend has correct mode
+            // Attempt to sync settings first
             try {
                 const currentConfig = await fetchSettings();
                 if (currentConfig.mode !== mode) {
                     await updateSettings({ ...currentConfig, mode });
                 }
             } catch (configErr) {
-                console.warn("Could not sync settings, proceeding to scan:", configErr);
+                console.warn("Settings sync failed (minor), continuing to scan:", configErr);
             }
             
             const data = await fetchScan();
@@ -45,6 +45,9 @@ const Dashboard: React.FC = () => {
 
     const activeTrades = scanData?.trades?.filter(t => t.signal !== 'NO TRADE') || [];
     const ignoredTrades = scanData?.trades?.filter(t => t.signal === 'NO TRADE') || [];
+    
+    // Check if we have data issues (like in your screenshot where all are "Insufficient Data")
+    const hasDataIssues = ignoredTrades.length > 0 && activeTrades.length === 0 && ignoredTrades.every(t => t.reason === 'Insufficient Data');
 
     return (
         <div className="min-h-screen bg-gray-900 text-gray-100 p-6 flex flex-col">
@@ -76,8 +79,15 @@ const Dashboard: React.FC = () => {
                 <div className="bg-red-900/20 border border-red-800 text-red-400 p-4 rounded mb-4">
                     <strong>Connection Error:</strong> {error}
                     <div className="text-xs mt-2 opacity-75">
-                        Attempted to connect to: {getApiUrl()}
+                        Frontend tried to fetch: <strong>{getApiUrl()}/scan</strong><br/>
+                        Check console logs for details.
                     </div>
+                </div>
+            )}
+
+            {hasDataIssues && (
+                 <div className="bg-yellow-900/20 border border-yellow-800 text-yellow-500 p-4 rounded mb-6">
+                    <strong>Note:</strong> Stocks are returning "Insufficient Data". The backend may be waiting for Yahoo Finance data or the market has just opened.
                 </div>
             )}
 
@@ -123,7 +133,7 @@ const Dashboard: React.FC = () => {
             </div>
 
             <footer className="text-xs text-gray-600 border-t border-gray-800 pt-4 mt-auto">
-                Backend: {getApiUrl()}
+                Connected to: {getApiUrl()}
             </footer>
         </div>
     );
