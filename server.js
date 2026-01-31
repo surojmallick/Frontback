@@ -7,30 +7,33 @@ const { getConfig, updateConfig } = require('./backend/config');
 const app = express();
 const PORT = process.env.PORT || 8080;
 
+// Enable CORS for all routes
 app.use(cors());
 app.use(express.json());
 
-// Request logging middleware for debugging
+// Request logging
 app.use((req, res, next) => {
     console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
     next();
 });
 
-// Serve static files from the build directory
+// Serve static files from dist
 app.use(express.static(path.join(__dirname, 'dist')));
 
-// API Routes
-app.get('/api/settings', (req, res) => {
+// --- API Logic ---
+const apiRouter = express.Router();
+
+apiRouter.get('/settings', (req, res) => {
     res.json(getConfig());
 });
 
-app.post('/api/settings', (req, res) => {
+apiRouter.post('/settings', (req, res) => {
     const newConfig = req.body;
     const updated = updateConfig(newConfig);
     res.json(updated);
 });
 
-app.get('/api/scan', async (req, res) => {
+apiRouter.get('/scan', async (req, res) => {
     try {
         const results = await runScan();
         res.json(results);
@@ -40,18 +43,25 @@ app.get('/api/scan', async (req, res) => {
     }
 });
 
-app.get('/health', (req, res) => {
+apiRouter.get('/health', (req, res) => {
     res.send('OK');
 });
 
-// Handle SPA routing: return index.html for any unknown route NOT starting with /api
+// Mount API router on BOTH /api and / to handle prefix variations
+app.use('/api', apiRouter);
+app.use('/', apiRouter);
+
+// --- Catch-All for Frontend ---
+// This must be after API routes
 app.get('*', (req, res) => {
-    if (req.url.startsWith('/api')) {
+    // If it looks like an API call but wasn't caught above, return 404 json
+    if (req.url.startsWith('/api/') || req.headers.accept?.includes('application/json')) {
         return res.status(404).json({ error: 'API endpoint not found' });
     }
+    // Otherwise serve index.html for SPA
     res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on port ${PORT}`);
 });
