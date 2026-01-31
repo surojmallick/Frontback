@@ -1,17 +1,17 @@
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
+const fs = require('fs');
 const { runScan } = require('./backend/scan');
 const { getConfig, updateConfig } = require('./backend/config');
 
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-// Middleware
-app.use(cors()); // Allow all CORS for simplicity in this demo
+app.use(cors());
 app.use(express.json());
 
-// Logging Middleware
+// Request logging
 app.use((req, res, next) => {
     console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
     next();
@@ -49,25 +49,36 @@ apiRouter.get('/scan', async (req, res) => {
     }
 });
 
-// Mount API on /api
+// Mount API
 app.use('/api', apiRouter);
 
 // --- Frontend Static Serving ---
-// Serve static files from the 'dist' directory created by 'npm run build'
-app.use(express.static(path.join(__dirname, 'dist')));
+const distPath = path.join(__dirname, 'dist');
+
+// Check if build exists
+if (!fs.existsSync(distPath)) {
+    console.error("CRITICAL: 'dist' directory not found. Did the build run?");
+}
+
+app.use(express.static(distPath));
 
 // Handle React Routing (SPA)
-// For any request that doesn't match an API route or static file, send index.html
 app.get('*', (req, res) => {
-    // Check if client is expecting JSON (api call that missed)
-    if (req.headers.accept && req.headers.accept.includes('application/json')) {
+    // If it's an API request that fell through, return 404 JSON
+    if (req.url.startsWith('/api') || (req.headers.accept && req.headers.accept.includes('application/json'))) {
         return res.status(404).json({ error: 'API route not found' });
     }
-    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+    
+    // Otherwise serve index.html
+    const indexPath = path.join(distPath, 'index.html');
+    if (fs.existsSync(indexPath)) {
+        res.sendFile(indexPath);
+    } else {
+        res.status(500).send('Application is building or missing. Please check server logs.');
+    }
 });
 
-// Start Server
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on port ${PORT}`);
-    console.log(`API available at http://localhost:${PORT}/api`);
+    console.log(`API available at /api`);
 });

@@ -5,10 +5,9 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 3000,
-    // Local development proxy to avoid CORS when running npm run dev locally
     proxy: {
       '/api': {
-        target: 'https://frontback-production.up.railway.app',
+        target: 'http://localhost:8080',
         changeOrigin: true,
         secure: false,
       }
