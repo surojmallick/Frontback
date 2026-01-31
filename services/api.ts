@@ -1,8 +1,16 @@
 import { Config, ScanResponse } from '../types';
 
-// In production (served by same origin), use relative path (empty string)
-// In development, use localhost:8080 (assuming backend is running there)
-const BASE_URL = import.meta.env.PROD ? '' : (import.meta.env.VITE_API_URL || 'http://localhost:8080').replace(/\/$/, '');
+// Use the specific Railway domain for production
+const PROD_URL = 'https://frontback-production.up.railway.app';
+
+// Determine Base URL:
+// 1. Check VITE_API_URL env var
+// 2. If Dev mode, use localhost
+// 3. Fallback to the hardcoded Production Railway URL
+const BASE_URL = (
+    import.meta.env.VITE_API_URL || 
+    (import.meta.env.DEV ? 'http://localhost:8080' : PROD_URL)
+).replace(/\/$/, '');
 
 export const fetchSettings = async (): Promise<Config> => {
     try {
